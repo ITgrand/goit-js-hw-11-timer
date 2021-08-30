@@ -1,56 +1,39 @@
-const refs = {
-  days: document.querySelector('[data-value="days"]'),
-  hours: document.querySelector('[data-value="hours"]'),
-  mins: document.querySelector('[data-value="mins"]'),
-  secs: document.querySelector('[data-value="secs"]'),
-};
+class CountdownTimer {
+    constructor({ selector, targetDate }){
+            
+      this.targetDate = targetDate;      
+      this.days = document.querySelector('[data-value="days"]');
+      this.hours = document.querySelector('[data-value="hours"]');
+      this.mins = document.querySelector('[data-value="mins"]');
+      this.secs = document.querySelector('[data-value="secs"]');
+    }
+    
+    timer(){
+    const timeInFurure = this.targetDate.getTime(); 
+    
+    setInterval(() =>{
+        const currentTime = Date.now();     
+        const deltaTime = timeInFurure - currentTime;
+        const days = Math.floor(deltaTime / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((deltaTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((deltaTime % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((deltaTime % (1000 * 60)) / 1000);
 
-class Timer {
-  constructor({ selector, targetDate }) {
-    this.selector = selector;
-    this.targetDate = targetDate;
-    this.interval = null;
-  }
-  start() {
-    setInterval(() => {
-      const currentTime = Date.now();
-      const deltaTime = this.targetDate - currentTime;
-      const { days, hours, mins, secs } = this.getTimeComponents(deltaTime);
-
-      refs.days.textContent = `${days}`;
-      refs.hours.textContent = `${hours}`;
-      refs.mins.textContent = `${mins}`;
-      refs.secs.textContent = `${secs}`;
-
-      if (deltaTime <= 0) {
-        clearInterval(this.interval);
-        refs.days.textContent = `00`;
-        refs.hours.textContent = `00`;
-        refs.mins.textContent = `00`;
-        refs.secs.textContent = `00`;
-      }
+        this.days.textContent = days  < 10 ? `0${days}` : days; 
+        this.hours.textContent = hours  < 10 ? `0${hours}` : hours; 
+        this.mins.textContent = mins  < 10 ? `0${mins}` : mins;
+        this.secs.textContent = secs  < 10 ? `0${secs}` : secs;
+        
+        return `${days}:${hours}:${mins}:${secs}`;  
+            
     }, 1000);
-  }
-
-  pad(value) {
-    return String(value).padStart(2, "0");
-  }
-
-  getTimeComponents(time) {
-    const days = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
-    const hours = this.pad(
-      Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    );
-    const mins = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
-    const secs = this.pad(Math.floor((time % (1000 * 60)) / 1000));
-
-    return { days, hours, mins, secs };
-  }
+    }      
 }
 
-const timer = new Timer({
-  selector: "#timer-1",
-  targetDate: new Date("Aug 09, 2021, 15:26:00"),
-});
+const countDown = new CountdownTimer({
+    selector: "#timer-1",
+    targetDate: new Date("Jul 5, 2025"),
+    }
+)
 
-timer.start();
+countDown.timer();
